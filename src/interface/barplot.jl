@@ -14,7 +14,7 @@ which have to be numeric, will be used as the heights of the bars.
 
 # Usage
     
-    barplot(text, heights; $(keywords((border = :barplot, color = :green, maximum = nothing), remove = (:xlim, :ylim, :yscale, :height, :grid), add = (:symbols,))))
+    barplot(text, heights; $(keywords((border = :barplot, color = :green, maximum = nothing), remove = (:xlim, :ylim, :height, :grid), add = (:symbols,))))
     barplot(dict; kw...)
 
 # Arguments
@@ -25,6 +25,7 @@ $(arguments(
         heights = "the values / heights of the bars",
         dict = "a dictonary in which the keys will be used as `text` and the values will be used as `heights`",
         xscale = "`Function` or `Symbol` to transform the bar length before plotting: this effectively scales the `x`-axis without influencing the captions of the individual bars (use `xscale = :log10` for logscale)",
+        yscale = "`Function` or `Symbol` to transform the bin values before plotting: this effectively scales the `y`-axis  (use `yscale = :log10` for logscale)",
         color = "`Vector` of colors, or scalar - $(DESCRIPTION[:color])",
         maximum = "optional maximal height"
     ); remove = (:xlim, :ylim, :yscale, :height, :grid), add = (:symbols,),
@@ -58,6 +59,7 @@ function barplot(
     color::Union{UserColorType,AbstractVector} = :green,
     width::Union{Nothing,Integer} = nothing,
     xscale = KEYWORDS.xscale,
+    yscale = KEYWORDS.yscale,
     name::AbstractString = KEYWORDS.name,
     kw...,
 )
@@ -91,6 +93,7 @@ function barplot(
         symbols = KEYWORDS.symbols,
         maximum = nothing,
         xscale,
+        yscale,
         color,
         okw...,
     )

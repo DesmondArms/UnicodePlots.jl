@@ -10,7 +10,7 @@ Note internally that `horizontal_histogram` is a simply wrapper for
 
 # Usage
 
-    horizontal_histogram(hist; $(keywords((border = :barplot, color = :green), remove = (:ylim, :yscale, :height, :grid), add = (:symbols,))))
+    horizontal_histogram(hist; $(keywords((border = :barplot, color = :green), remove = (:ylim, :height, :grid), add = (:symbols,))))
 
 # Arguments
 
@@ -20,6 +20,7 @@ function horizontal_histogram(
     hist::Histogram;
     symbols = ('▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'),
     xscale = KEYWORDS.xscale,
+    yscale = KEYWORDS.yscale,
     info::AbstractString = "",  # unused in horizontal version
     kw...,
 )
@@ -65,6 +66,7 @@ function horizontal_histogram(
         counts;
         symbols,
         xscale,
+        yscale,
         xlabel = transform_name(xscale, "Frequency"),
         kw...,
     )
