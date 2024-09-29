@@ -24,7 +24,7 @@ function horizontal_histogram(
     info::AbstractString = "",  # unused in horizontal version
     kw...,
 )
-    edges, counts = hist.edges[1], hist.weights
+    edges, counts = hist.edges[1], hist.weights # basically this is 
     labels = Vector{String}(undef, length(counts))
     binwidths = diff(edges)
     # compute label padding based on all labels.
@@ -136,7 +136,7 @@ Draws a horizontal or vertical histogram of the given `data`, fitted to an `Hist
 
 # Usage
 
-    histogram(x; nbins, closed = :left, vertical = false, stats = true, $(keywords((border = :barplot, color = :green), remove = (:xlim, :ylim, :xscale, :yscale, :width, :height, :grid), add = (:symbols,))))
+    histogram(x; nbins, closed = :left, vertical = false, stats = true, $(keywords((border = :barplot, color = :green), remove = (:xlim, :ylim, :xscale, :width, :height, :grid), add = (:symbols,))))
 
 # Arguments
 
@@ -147,6 +147,7 @@ $(arguments(
         closed = "if `:left` (default), the bin intervals are left-closed ``[a, b)``; if `:right`, intervals are right-closed ``(a, b]``",
         vertical = "vertical histogram instead of the default horizontal one",
         stats = "display statistics (vertical only)",
+        yscale = "scale for bins"
     ); add = (:symbols,)
 ))
 
@@ -198,6 +199,32 @@ julia> histogram(randn(100_000) .* .1, nbins=60, vertical=true, height=10)
 [`Plot`](@ref), [`barplot`](@ref), [`BarplotGraphics`](@ref)
 """
 function histogram(x::AbstractArray; closed = :left, vertical = false, stats = true, kw...)
+    yscale= KEYWORDS.yscale,
+    x_plot = dropdims(x, dims = Tuple(filter(d -> size(x, d) == 1, 1:ndims(x))))
+    len = length(x_plot)
+    nbins = get(kw, :nbins, sturges(len))
+    hist = fit(Histogram, x_plot; closed, nbins)
+    if(yscale== log10)
+        hist = log_fit(Histogram, x_plot; closed, nbins)
+    end
+    info = if vertical && stats
+        digits = 2
+        mx, Mx = extrema(x_plot)
+        μ = sum(x_plot) / len
+        σ = √(sum((x_plot .- μ) .^ 2) / len)
+        "μ ± σ: " *
+        lpad(round(μ; digits), digits + 1) *
+        " ± " *
+        lpad(round(σ; digits), digits + 1)
+    else
+        ""
+    end
+    callable = vertical ? vertical_histogram : horizontal_histogram
+    callable(hist; info, filter(p -> p.first ≢ :nbins, kw)...)
+end
+
+
+function loghistogram(x::AbstractArray; closed = :left, vertical = false, stats = true, kw...)
     x_plot = dropdims(x, dims = Tuple(filter(d -> size(x, d) == 1, 1:ndims(x))))
     len = length(x_plot)
     nbins = get(kw, :nbins, sturges(len))

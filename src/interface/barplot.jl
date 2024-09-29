@@ -28,7 +28,7 @@ $(arguments(
         yscale = "`Function` or `Symbol` to transform the bin values before plotting: this effectively scales the `y`-axis  (use `yscale = :log10` for logscale)",
         color = "`Vector` of colors, or scalar - $(DESCRIPTION[:color])",
         maximum = "optional maximal height"
-    ); remove = (:xlim, :ylim, :yscale, :height, :grid), add = (:symbols,),
+    ); remove = (:xlim, :ylim, :height, :grid), add = (:symbols,),
 ))
 
 # Author(s)
